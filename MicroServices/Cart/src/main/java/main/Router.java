@@ -1,8 +1,10 @@
 package main;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Optional;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -10,22 +12,31 @@ import com.google.gson.JsonParser;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
+import spark.http.matching.Halt;
 
 public class Router {
 
 	private final DBClient db;
+	private final JWTToken jwtTokener;
 	
-	public Router(DBClient db) {
+	public Router(DBClient db) throws IllegalArgumentException, UnsupportedEncodingException {
 		this.db = db;
+		this.jwtTokener = new JWTToken();
 	}
 	
 	private String saveItem(Request req, Response res) {
-		//TODO: Add jwt
 		// Get params
 		JsonObject requestJson = toJson(req.body());
+		String jwt = requestJson.get("jwt").getAsString();
 		String username = requestJson.get("username").getAsString();
 		String itemid = requestJson.get("itemid").getAsString();
 		int quantity = requestJson.get("quantity").getAsInt();
+
+		// Check identity
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
 		
 		// Check if item exists
 		Optional<CartItem> itemOpt = db.findOpt(CartItem.createId(username, itemid), CartItem.class);
@@ -41,12 +52,17 @@ public class Router {
 	}
 	
 	private String removeItem(Request req, Response res) {
-		// TODO: Add jwt
-		
 		// Get params
 		JsonObject requestJson = toJson(req.body());
+		String jwt = requestJson.get("jwt").getAsString();
 		String username = requestJson.get("username").getAsString();
 		String itemid = requestJson.get("itemid").getAsString();
+		
+		// Check identity
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
 		
 		// Find item in order to get rev and remove
 		Optional<CartItem> itemOpt = db.findOpt(CartItem.createId(username, itemid), CartItem.class);
@@ -58,10 +74,16 @@ public class Router {
 	}
 	
 	private String getItemsOfUser(Request req, Response res) {
-		// TODO: Add jwt
-		
 		// Get params
-		String username = req.params("username");
+		JsonObject requestJson = toJson(req.body());
+		String jwt = requestJson.get("jwt").getAsString();
+		String username = requestJson.get("username").getAsString();
+
+		// Check identity
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
 		
 		// Create query
 		JsonObject regex = new JsonObject();
@@ -83,9 +105,15 @@ public class Router {
 		return new Gson().toJson(object);
 	}
 	
+	private boolean verifyJWTUsername(String token, String username)
+	{
+		DecodedJWT jwt = this.jwtTokener.validate(token);
+		return jwt.getClaim("username").equals(username);
+	}
+	
 	public void init() {
 		Spark.post("/item", this::saveItem);
 		Spark.delete("/item", this::removeItem);
-		Spark.get("/items/:username", this::getItemsOfUser);
+		Spark.get("/items", this::getItemsOfUser);
 	}
 }

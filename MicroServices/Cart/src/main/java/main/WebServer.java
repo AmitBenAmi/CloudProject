@@ -1,5 +1,6 @@
 package main;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,9 +14,10 @@ import spark.Spark;
 
 public class WebServer {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IllegalArgumentException, UnsupportedEncodingException {
 		DBClient db = new DBClient();
 		
 		new Router(db).init();
+		Spark.port(80);
 	}
 }
