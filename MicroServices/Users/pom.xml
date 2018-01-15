@@ -1,8 +1,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>com.organization.cloudproject</groupId>
+  <groupId>com.cloudproject</groupId>
   <artifactId>usersService</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>Users Service</name>
   <description>Users MicroServicec for the cloud project</description>
+  <dependencies>
+  	<dependency>
+  		<groupId>com.sparkjava</groupId>
+  		<artifactId>spark-core</artifactId>
+  		<version>2.7.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>HTTPClient</groupId>
+  		<artifactId>HTTPClient</artifactId>
+  		<version>0.3-3</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>com.googlecode.json-simple</groupId>
+  		<artifactId>json-simple</artifactId>
+  		<version>1.1.1</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.lightcouch</groupId>
+  		<artifactId>lightcouch</artifactId>
+  		<version>0.2.0</version>
+  	</dependency>
+  </dependencies>
 </project>
