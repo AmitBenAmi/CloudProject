@@ -55,8 +55,8 @@ public class MicroServicesFilter implements Filter {
 				apiMap.put(key, removeLastCharFrom(url));
 			}
 		});
+		
 	}
-	
 	private String removeLastCharFrom(String s) {
 		return s.substring(0, s.length() -1);
 	}
