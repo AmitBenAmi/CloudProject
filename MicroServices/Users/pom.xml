@@ -5,17 +5,11 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>Users Service</name>
   <description>Users MicroServicec for the cloud project</description>
-<<<<<<< HEAD
   <dependencies>
   	<dependency>
   		<groupId>com.sparkjava</groupId>
   		<artifactId>spark-core</artifactId>
   		<version>2.7.1</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>HTTPClient</groupId>
-  		<artifactId>HTTPClient</artifactId>
-  		<version>0.3-3</version>
   	</dependency>
   	<dependency>
   		<groupId>com.googlecode.json-simple</groupId>
@@ -27,23 +21,10 @@
   		<artifactId>lightcouch</artifactId>
   		<version>0.2.0</version>
   	</dependency>
-=======
-    <dependencies>
- 	<dependency>
-	  <groupId>org.lightcouch</groupId>
-	  <artifactId>lightcouch</artifactId>
-	  <version>0.2.0</version>
-	</dependency>
-  	<dependency>
-		<groupId>com.sparkjava</groupId>
-		<artifactId>spark-core</artifactId>
-		<version>2.7.1</version>
-  	</dependency>
   	<dependency>
     	<groupId>com.auth0</groupId>
     	<artifactId>java-jwt</artifactId>
     	<version>3.3.0</version>
 	</dependency>
->>>>>>> a9228ff171a424c648c928a2adef249d6d73025c
   </dependencies>
 </project>
