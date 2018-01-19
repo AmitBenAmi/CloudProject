@@ -12,10 +12,14 @@ public class Main {
 		GmailMailSSL gmail = new GmailMailSSL(username, password);
 		
 		try {
-			gmail.sendMail("benamiamit0@gmail.com", "test mail", "hey <br> <strong>hello from microservice!</strong>");
+			//gmail.sendMail("benamiamit0@gmail.com", "test mail", "hey <br> <strong>hello from microservice!</strong>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
+		
+		send s = new send();
+		s.getMessage();
+		s.sendMessage("Hello World this is amit");
 	}
 
 }
