@@ -12,14 +12,14 @@
   		<version>2.7.1</version>
   	</dependency>
   	<dependency>
-  		<groupId>HTTPClient</groupId>
-  		<artifactId>HTTPClient</artifactId>
-  		<version>0.3-3</version>
+  		<groupId>com.auth0</groupId>
+  		<artifactId>java-jwt</artifactId>
+  		<version>3.3.0</version>
   	</dependency>
   	<dependency>
-  		<groupId>com.googlecode.json-simple</groupId>
-  		<artifactId>json-simple</artifactId>
-  		<version>1.1.1</version>
+  		<groupId>org.lightcouch</groupId>
+  		<artifactId>lightcouch</artifactId>
+  		<version>0.2.0</version>
   	</dependency>
   </dependencies>
 </project>
