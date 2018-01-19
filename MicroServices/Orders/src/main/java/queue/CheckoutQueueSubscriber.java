@@ -33,7 +33,7 @@ public class CheckoutQueueSubscriber implements QueueSubscriber {
 			db.save(newOrder);
 		}
 		catch(Exception e) {
-			// TODO: write to queue of failed orders for more handling...
+			e.printStackTrace();
 		}
 	}
 	
@@ -50,7 +50,6 @@ public class CheckoutQueueSubscriber implements QueueSubscriber {
 			JsonObject fullItem = getDetailsOfItem(cartItemId);
 			String title = fullItem.get("name").getAsString();
 			double price = fullItem.get("price").getAsDouble();
-			// TODO: go to items service to get the description, title, & price
 			items.add(new OrderItem(cartItemId, title, price, quantity));
 		});
 		
@@ -59,7 +58,7 @@ public class CheckoutQueueSubscriber implements QueueSubscriber {
 
 	private JsonObject getDetailsOfItem(String id) {
 		try {
-			String body = Unirest.get(WebServer.gatewayAddress + "/api/items/item/" + id).asString().getBody();
+			String body = Unirest.get(WebServer.gatewayAddress + "/api/items/items/" + id).asString().getBody();
 			return parser.parse(body).getAsJsonObject();
 		} catch (UnirestException e) {
 			throw new RuntimeException(e);
