@@ -30,6 +30,18 @@ public class DBClient {
 		return find(id, JsonObject.class);
 	}
 	
+	public <T> List<T> findByProp(String property, String value, Class<T> cls) {
+		JsonObject equal = new JsonObject();
+		equal.addProperty("$eq", value);
+		JsonObject query = new JsonObject();
+		query.add(property, equal);
+		JsonObject selector = new JsonObject();
+		selector.add("selector", query);
+		
+		
+		return this.connection.findDocs(selector.toString(), cls);
+	}
+	
 	/**
 	 * Throws NoDocumentException if document doesn't exists
 	 * @param id

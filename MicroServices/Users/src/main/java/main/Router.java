@@ -1,6 +1,7 @@
 package main;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Optional;
 
 import com.google.gson.JsonObject;
@@ -23,11 +24,13 @@ public class Router {
 		String username = requestJson.get("username").getAsString();
 		String password = requestJson.get("password").getAsString();
 		
-		Optional<User> userOpt = this.db.findOpt(username, User.class);
-		if (userOpt.isPresent()) {
-			User user = userOpt.get();
+		List<User> users = this.db.findByProp("userName", username, User.class);
+		if (users.size() == 1) {
+			User user = users.get(0);
 			if (user.passwordValid(password)) {
-				return new JWTToken().create(user);
+				String token = new JWTToken().create(user);
+				res.cookie("jwt", token);
+				return token;
 			}
 		}
 		
