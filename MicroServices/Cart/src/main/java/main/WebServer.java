@@ -16,8 +16,9 @@ public class WebServer {
 
 	public static void main(String[] args) throws IllegalArgumentException, UnsupportedEncodingException {
 		DBClient db = new DBClient();
+		Queue queue = new Queue();
 		
-		new Router(db).init();
-		Spark.port(80);
+		Spark.port(8082);
+		new Router(db, queue).init();
 	}
 }

@@ -27,7 +27,9 @@ public class Router {
 		if (userOpt.isPresent()) {
 			User user = userOpt.get();
 			if (user.passwordValid(password)) {
-				return new JWTToken().create(user);
+				String token = new JWTToken().create(user);; 
+				res.cookie("jwt", token);
+				return token;
 			}
 		}
 		
