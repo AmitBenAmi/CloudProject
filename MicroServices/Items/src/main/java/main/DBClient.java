@@ -37,6 +37,10 @@ private final CouchDbClient connection;
 		return this.connection.find(clazz, id);
 	}
 	
+	public <T> List<T> findAll(Class<T> cls) {
+		return this.connection.view("_all_docs").includeDocs(true).query(cls);
+	}
+	
 	/**
 	 * If document doesn't exists doesn't throw exception
 	 * @param id

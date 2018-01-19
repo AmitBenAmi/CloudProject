@@ -26,15 +26,9 @@ private final DBClient db;
 		return toJsonString(item);
 	}
 	
-	private List<Item> getItems(Request req, Response res) {
-		JsonObject regex = new JsonObject();
-		regex.addProperty("$eq", "_all_docs");
-		JsonObject idQuery = new JsonObject();
-		idQuery.add("_id", regex);
-		JsonObject selector = new JsonObject();
-		selector.add("selector", idQuery);
-		
-		return this.db.findBySelector(selector, Item.class);
+	private String getItems(Request req, Response res) {
+		List<Item> items = this.db.findAll(Item.class);
+		return toJsonString(items);
 	}
 	
 	private JsonObject toJson(String json) {
