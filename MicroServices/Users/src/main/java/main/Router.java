@@ -2,7 +2,6 @@ package main;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Optional;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
