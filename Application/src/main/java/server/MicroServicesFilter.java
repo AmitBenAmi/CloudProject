@@ -5,8 +5,10 @@ import java.util.Optional;
 import java.util.Set;
 
 import spark.Filter;
+import spark.Redirect;
 import spark.Request;
 import spark.Response;
+import spark.Spark;
 
 public class MicroServicesFilter implements Filter {
 
@@ -27,7 +29,16 @@ public class MicroServicesFilter implements Filter {
 											 		  .findFirst();
 		
 		matchPrefix.ifPresent(prefix -> {
-			response.redirect(this.apiMap.get(prefix) + UrlWithoutPrefix(url, prefix));
+			String newUrl = this.apiMap.get(prefix) + UrlWithoutPrefix(url, prefix);
+			
+			if (request.requestMethod().equals("GET")) {
+				response.redirect(newUrl);
+			}
+			else {
+				response.redirect(newUrl, 307);
+			}
+			
+			Spark.halt();
 		});
 	}
 

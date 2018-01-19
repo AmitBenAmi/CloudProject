@@ -29,7 +29,7 @@ public class Router {
 	private String saveItem(Request req, Response res) {
 		// Get params
 		JsonObject requestJson = toJson(req.body());
-		String jwt = requestJson.get("jwt").getAsString();
+		String jwt = req.cookie("jwt");
 		String username = requestJson.get("username").getAsString();
 		String itemid = requestJson.get("itemid").getAsString();
 		int quantity = requestJson.get("quantity").getAsInt();
@@ -56,7 +56,7 @@ public class Router {
 	private String removeItem(Request req, Response res) {
 		// Get params
 		JsonObject requestJson = toJson(req.body());
-		String jwt = requestJson.get("jwt").getAsString();
+		String jwt = req.cookie("jwt");
 		String username = requestJson.get("username").getAsString();
 		String itemid = requestJson.get("itemid").getAsString();
 
@@ -77,10 +77,9 @@ public class Router {
 
 	private String getItemsOfUser(Request req, Response res) {
 		// Get params
-		JsonObject requestJson = toJson(req.body());
-		String jwt = requestJson.get("jwt").getAsString();
-		String username = requestJson.get("username").getAsString();
-
+		String jwt = req.cookie("jwt");
+		String username = req.params("username");
+		
 		// Check identity
 		if (!verifyJWTUsername(jwt, username)) {
 			// Immidatly exists the function and return 401
@@ -92,9 +91,8 @@ public class Router {
 
 	private String checkout(Request req, Response res) {
 		// Get params
-		JsonObject requestJson = toJson(req.body());
-		String jwt = requestJson.get("jwt").getAsString();
-		String username = requestJson.get("username").getAsString();
+		String jwt = req.cookie("jwt");
+		String username = req.params("username");
 
 		// Check identity
 		if (!verifyJWTUsername(jwt, username)) {
@@ -145,7 +143,7 @@ public class Router {
 	public void init() {
 		Spark.post("/item", this::saveItem);
 		Spark.delete("/item", this::removeItem);
-		Spark.get("/items", this::getItemsOfUser);
-		Spark.post("/checkout", this::checkout);
+		Spark.get("/items/:username", this::getItemsOfUser);
+		Spark.post("/checkout/:username", this::checkout);
 	}
 }
