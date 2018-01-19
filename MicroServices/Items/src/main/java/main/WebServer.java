@@ -7,7 +7,7 @@ public class WebServer {
 	public static void main(String[] args) {
 		DBClient db = new DBClient();
 		
-		Spark.port(80);
+		Spark.port(8083);
 		new itemRouter(db).init();
 	}
 
