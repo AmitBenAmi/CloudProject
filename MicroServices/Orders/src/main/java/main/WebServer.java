@@ -8,6 +8,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import queue.CheckoutQueueSubscriber;
+import queue.Queue;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -21,5 +23,9 @@ public class WebServer {
 		
 		Spark.port(8081);
 		new OrdersRouter(db).init();
+		
+		CheckoutQueueSubscriber subscriber = new CheckoutQueueSubscriber(db);
+		Queue queue = new Queue(subscriber);
+		queue.listen();
 	}
 }

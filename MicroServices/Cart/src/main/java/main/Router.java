@@ -102,15 +102,17 @@ public class Router {
 		
 		List<CartItem> items = getItemsInCart(username);
 		
-		JsonObject json = new JsonObject();
-		json.addProperty("username", username);
-		json.add("items", new Gson().toJsonTree(items));
-		
-		queue.sendMessage(toJsonString(json));
-		
-		items.forEach(item -> {
-			db.remove(item);
-		});
+		if (items.size() > 0) {
+			JsonObject json = new JsonObject();
+			json.addProperty("username", username);
+			json.add("items", new Gson().toJsonTree(items));
+			
+			queue.sendMessage(toJsonString(json));
+			
+			items.forEach(item -> {
+				db.remove(item);
+			});
+		}
 		
 		return "";
 	}
