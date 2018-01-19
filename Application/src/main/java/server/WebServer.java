@@ -17,7 +17,10 @@ public class WebServer {
 		// Redirect to services
 		Map<String, String> servicesRouting = new HashMap<String, String>() {
 			{
-				put("/api/items", "http://google.com");
+				put("/api/items", "http://localhost:8083");
+				put("/api/cart", "http://localhost:8082");
+				put("/api/orders", "http://localhost:8081");
+				put("/api/users", "http://localhost:8084");
 			}
 		};
 

@@ -14,12 +14,12 @@ import spark.Spark;
 
 public class WebServer {
 
-	public static final String gatewayAddress = "http://application.com";
+	public static final String gatewayAddress = "http://localhost:8080";
 	
 	public static void main(String[] args) throws IllegalArgumentException, UnsupportedEncodingException {
 		DBClient db = new DBClient();
 		
+		Spark.port(8081);
 		new OrdersRouter(db).init();
-		Spark.port(80);
 	}
 }

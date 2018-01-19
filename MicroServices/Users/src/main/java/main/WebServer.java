@@ -8,7 +8,7 @@ public class WebServer {
 		DBClient db = new DBClient();
 		
 		new Router(db).init();
-		Spark.port(80);
+		Spark.port(8084);
 	}
 
 }
