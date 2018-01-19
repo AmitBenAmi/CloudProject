@@ -1,5 +1,6 @@
 package main;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Optional;
 
 import com.google.gson.Gson;
@@ -18,11 +19,22 @@ private final DBClient db;
 		this.db = db;
 	}
 	
-	private String getItems(Request req, Response res) {
+	private String getItembyId(Request req, Response res) {
 		String itemId = req.params("itemid");
 		Item item = this.db.find(itemId, Item.class);
 		
 		return toJsonString(item);
+	}
+	
+	private List<Item> getItems(Request req, Response res) {
+		JsonObject regex = new JsonObject();
+		regex.addProperty("$eq", "_all_docs");
+		JsonObject idQuery = new JsonObject();
+		idQuery.add("_id", regex);
+		JsonObject selector = new JsonObject();
+		selector.add("selector", idQuery);
+		
+		return this.db.findBySelector(selector, Item.class);
 	}
 	
 	private JsonObject toJson(String json) {
@@ -34,7 +46,8 @@ private final DBClient db;
 	}
 	
 	public void init() {
-		Spark.get("/items/:itemid", this::getItems);
+		Spark.get("/items/:itemid", this::getItembyId);
+		Spark.get("/items", this::getItems);
 	}
 
 }

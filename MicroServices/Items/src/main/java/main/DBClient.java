@@ -26,9 +26,6 @@ private final CouchDbClient connection;
 		return find(id, JsonObject.class);
 	}
 	
-//	public JsonObject find() {
-	//	return this.connection.
-	//}
 	
 	/**
 	 * Throws NoDocumentException if document doesn't exists
