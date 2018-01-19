@@ -11,15 +11,9 @@ public class Main {
 		
 		GmailMailSSL gmail = new GmailMailSSL(username, password);
 		
-		try {
-			//gmail.sendMail("benamiamit0@gmail.com", "test mail", "hey <br> <strong>hello from microservice!</strong>");
-		} catch (Exception e) {
-			e.printStackTrace();
-		} 
+		GmailQueueSubscriber gmailSubscriber = new GmailQueueSubscriber(gmail);
 		
-		send s = new send();
-		s.getMessage();
-		s.sendMessage("Hello World this is amit");
+		Queue q = new Queue(gmailSubscriber);
+		q.listen();
 	}
-
 }

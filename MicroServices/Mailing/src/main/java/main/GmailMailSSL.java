@@ -12,7 +12,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class GmailMailSSL {
+public class GmailMailSSL implements MailMessanger {
 	
 	private final Properties properties;
 	private final String username;
