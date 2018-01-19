@@ -16,23 +16,21 @@ import spark.http.matching.Halt;
 
 public abstract class Router {
 
-	private final DBClient db;
 	private final JWTToken jwtTokener;
 	
-	public Router(DBClient db) throws IllegalArgumentException, UnsupportedEncodingException {
-		this.db = db;
+	public Router() throws IllegalArgumentException, UnsupportedEncodingException {
 		this.jwtTokener = new JWTToken();
 	}
 	
-	private JsonObject toJson(String json) {
+	protected JsonObject toJson(String json) {
 		return new JsonParser().parse(json).getAsJsonObject();
 	}
 	
-	private String toJsonString(Object object) {
+	protected String toJsonString(Object object) {
 		return new Gson().toJson(object);
 	}
 	
-	private boolean verifyJWTUsername(String token, String username)
+	protected boolean verifyJWTUsername(String token, String username)
 	{
 		DecodedJWT jwt = this.jwtTokener.validate(token);
 		return jwt.getClaim("username").equals(username);
