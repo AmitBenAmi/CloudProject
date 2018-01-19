@@ -19,4 +19,8 @@ public class Order {
 	public Order(String id, List<OrderItem> items, String userId) {
 		this(id, items, userId, null);
 	}
+	
+	public Order(List<OrderItem> items, String userId) {
+		this(null, items, userId, null);
+	}
 }

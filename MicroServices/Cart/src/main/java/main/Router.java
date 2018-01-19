@@ -139,7 +139,7 @@ public class Router {
 
 	private boolean verifyJWTUsername(String token, String username) {
 		DecodedJWT jwt = this.jwtTokener.validate(token);
-		return jwt.getClaim("username").equals(username);
+		return jwt.getClaim("username").asString().equals(username);
 	}
 
 	public void init() {

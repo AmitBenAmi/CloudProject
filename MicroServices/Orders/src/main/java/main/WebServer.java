@@ -14,6 +14,8 @@ import spark.Spark;
 
 public class WebServer {
 
+	public static final String gatewayAddress = "http://application.com";
+	
 	public static void main(String[] args) throws IllegalArgumentException, UnsupportedEncodingException {
 		DBClient db = new DBClient();
 		

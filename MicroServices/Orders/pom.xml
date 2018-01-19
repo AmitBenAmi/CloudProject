@@ -19,5 +19,15 @@
     	<artifactId>java-jwt</artifactId>
     	<version>3.3.0</version>
 	</dependency>
+  	<dependency>
+  		<groupId>com.rabbitmq</groupId>
+  		<artifactId>amqp-client</artifactId>
+  		<version>5.1.1</version>
+  	</dependency>
+  	<dependency>
+	    <groupId>com.mashape.unirest</groupId>
+	    <artifactId>unirest-java</artifactId>
+	    <version>1.4.9</version>
+	</dependency>
   </dependencies>
 </project>
