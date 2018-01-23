@@ -14,7 +14,8 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 
 public class Queue {
-	private final String QUEUE_NAME = "checkout";
+	private final String EXCHANGE_NAME = "checkout";
+	private String queueName;
 	private final String HOST_NAME = "portal-ssl292-6.bmix-lon-yp-0f59cdb0-ff8b-4718-9a7c-b0f8bb557253.benamiamit0-gmail-com.composedb.com";
 	private final String VIRTUAL_HOST = "bmix-lon-yp-0f59cdb0-ff8b-4718-9a7c-b0f8bb557253";
 	private final int PORT_NUMBER = 22817;
@@ -25,7 +26,7 @@ public class Queue {
 
 	public Queue(QueueSubscriber subscriber) {
 		this.subscriber = subscriber;
-		
+
 		try {
 			this.factory = new ConnectionFactory();
 			// this.factory.setUsername("broker");
@@ -47,18 +48,12 @@ public class Queue {
 		try {
 			this.connection = this.factory.newConnection();
 			this.channel = this.connection.createChannel();
-			this.channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+			this.channel.exchangeDeclare(EXCHANGE_NAME, "fanout");
+			boolean durable = true;
+			queueName = this.channel.queueDeclare("", durable, false, false, null).getQueue();
+			this.channel.queueBind(queueName, EXCHANGE_NAME, "");
 		} catch (TimeoutException e) {
 			System.out.println("Timeout exception: " + e.getMessage());
-		} catch (IOException e) {
-			System.out.println("IO exception: " + e.getMessage());
-		}
-	}
-
-	public void sendMessage(String message) {
-		try {
-			this.channel.basicPublish("", QUEUE_NAME, null, message.getBytes());
-			System.out.println("[x] sent '" + message + "'");
 		} catch (IOException e) {
 			System.out.println("IO exception: " + e.getMessage());
 		}
@@ -71,13 +66,19 @@ public class Queue {
 				@Override
 				public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
 						byte[] body) throws IOException {
-					String message = new String(body, "UTF-8");
-					System.out.println("[x] received '" + message + "'");
-					_this.subscriber.getMessage(message);
+					try {
+						String message = new String(body, "UTF-8");
+						System.out.println("[x] received '" + message + "'");
+						_this.subscriber.getMessage(message);
+					} finally {
+						System.out.println("[x] Done.");
+						channel.basicAck(envelope.getDeliveryTag(), false);
+					}
 				}
 			};
 
-			this.channel.basicConsume(QUEUE_NAME, true, consumer);
+			boolean autoAck = false;
+			this.channel.basicConsume(queueName, autoAck, consumer);
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
 		}
