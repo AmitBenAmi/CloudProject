@@ -22,4 +22,18 @@ public class JWTToken {
 		        .withClaim("username", user.username())
 		        .sign(this.algorithm);
 	}
+	
+	public String create(String serviceName) {
+		return JWT.create()
+		        .withIssuer(issuer)
+		        .withClaim("server", serviceName)
+		        .sign(this.algorithm);
+	}
+	
+	public DecodedJWT validate(String token) {
+	    JWTVerifier verifier = JWT.require(this.algorithm)
+	        .withIssuer(issuer)
+	        .build(); //Reusable verifier instance
+	    return verifier.verify(token);
+	}
 } 

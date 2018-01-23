@@ -4,6 +4,8 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 
 public class Main {
+	
+	public static final String gatewayAddress = "http://localhost:8080";
 
 	public static void main(String[] args) {
 		String password = "B4veLKbX6tQp";

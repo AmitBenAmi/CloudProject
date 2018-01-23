@@ -20,6 +20,10 @@ public class User {
 		return this.userName;
 	}
 	
+	public String email() {
+		return this.email;
+	}
+	
 	public boolean passwordValid(String password) {
 		return MD5.hashPassword(password).equals(this.passwordHash);
 	}

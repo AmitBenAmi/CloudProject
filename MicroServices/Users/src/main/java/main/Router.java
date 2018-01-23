@@ -3,6 +3,8 @@ package main;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -13,9 +15,11 @@ import spark.Spark;
 public class Router {
 
 	private final DBClient db;
+	private final JWTToken jwtTokener;
 	
-	public Router(DBClient db) {
+	public Router(DBClient db) throws IllegalArgumentException, UnsupportedEncodingException {
 		this.db = db;
+		this.jwtTokener = new JWTToken();
 	}
 	
 	private String checkUser(Request req, Response res) throws IllegalArgumentException, UnsupportedEncodingException {
@@ -52,12 +56,52 @@ public class Router {
 		return "";
 	}
 	
+	private String getUserEmail(Request req, Response res) {
+		String username = req.params("username");
+		String jwt = req.cookie("jwt");
+		
+//		// Check identity
+//		if (!verifyJWTUsername(jwt, username)) {
+//			// Immidatly exists the function and return 401
+//			Spark.halt(401, String.format("Username %s is not authorized", username));
+//		}
+		
+		List<User> users = this.db.findByProp("userName", username, User.class);
+		
+		if (users.size() == 1) {
+			User requestedUser = users.get(0);
+			JsonObject email = new JsonObject();
+			email.addProperty("email", requestedUser.email());
+			return this.toJsonString(email);
+		}
+		
+		res.status(404);
+		return "User not found";
+	}
+	
+//	private String authenticateService(Request req, Response res) throws IllegalArgumentException, UnsupportedEncodingException {
+//		String token = new JWTToken().create(req.params("servicename"));
+//		res.cookie("jwt", token);
+//		return token;
+//	}
+	
 	private JsonObject toJson(String json) {
 		return new JsonParser().parse(json).getAsJsonObject();
+	}
+	
+	private String toJsonString(Object object) {
+		return new Gson().toJson(object);
+	}
+	
+	private boolean verifyJWTUsername(String token, String username) {
+		DecodedJWT jwt = this.jwtTokener.validate(token);
+		return jwt.getClaim("username").asString().equals(username);
 	}
 	
 	public void init() {
 		Spark.post("/checkuser", this::checkUser);
 		Spark.post("/adduser", this::addUser);
+		Spark.get("/getuseremail/:username", this::getUserEmail);
+//		Spark.post("/service/authenticate/:servicename", this::authenticateService);
 	}
 } 
