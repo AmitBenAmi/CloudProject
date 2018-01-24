@@ -1,11 +1,7 @@
 package main;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Optional;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import spark.Request;
 import spark.Response;
@@ -29,10 +25,6 @@ private final DBClient db;
 	private String getItems(Request req, Response res) {
 		List<Item> items = this.db.findAll(Item.class);
 		return toJsonString(items);
-	}
-	
-	private JsonObject toJson(String json) {
-		return new JsonParser().parse(json).getAsJsonObject();
 	}
 	
 	private String toJsonString(Object object) {
