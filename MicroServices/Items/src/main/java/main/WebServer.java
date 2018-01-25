@@ -43,7 +43,7 @@ public class WebServer {
 		JedisPool pool = new JedisPool(REDIS_CONNECTION_STRING, createDumbSSLSocketFactory(), null, null);
 		
 		Spark.port(8083);
-		new itemRouter(db).init();
+		new itemRouter(db, pool).init();
 	}
 	
 	/**
