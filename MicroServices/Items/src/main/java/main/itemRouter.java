@@ -1,9 +1,20 @@
 package main;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -100,6 +111,55 @@ public class itemRouter {
 		}
 	}
 
+	public List<JSONObject> mostOrderedItems(int number){
+		List<JSONObject> listOfIDs = new ArrayList<JSONObject>();
+		List<JSONObject> xIDs = new ArrayList<JSONObject>();
+		JSONObject JsonObject;
+		Jedis jedis = redisPool.getResource();
+		
+		//taking all the keys that started with "Count:"
+		Set<String> allKeys = jedis.keys("Count:*");
+		for(String key : allKeys) {
+			int num = Integer.parseInt(jedis.get(key));
+			JsonObject = new JSONObject();
+			JsonObject.put("key" , key.substring(6));
+			JsonObject.put("count" , num);
+			listOfIDs.add(JsonObject);
+			}
+		
+		listOfIDs = sort(listOfIDs);
+		
+		//taking only the first X items
+		for(int i = 0; i < number; i++) {
+			xIDs.add(i, listOfIDs.get(i));
+		}
+		
+		return xIDs;
+		
+	}
+	
+	private List<JSONObject> sort(List<JSONObject> listOfIDs){
+		
+		Collections.sort(listOfIDs, new Comparator<JSONObject>() {
+		    @Override
+		    public int compare(JSONObject jsonObjectA, JSONObject jsonObjectB) {
+		        int compare = 0;
+		        try
+		        {
+		            int keyA = jsonObjectA.getInt("count");
+		            int keyB = jsonObjectB.getInt("count"); 
+		            compare = Integer.compare(keyB, keyA);
+		        }
+		        catch(JSONException e)
+		        {
+		            e.printStackTrace();
+		        }
+		        return compare;
+		    }
+		});
+		return listOfIDs;			
+	}
+	
 	public void init() {
 		Spark.get("/items/:itemid", this::getItembyId);
 		Spark.get("/items", this::getItems);
