@@ -16,6 +16,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -27,23 +28,30 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-
+import queue.CheckoutQueueSubscriber;
+import queue.Queue;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.exceptions.JedisException;
 import spark.Spark;
 
 public class WebServer {
 
 	private static final String REDIS_CONNECTION_STRING = "rediss://admin:ZXAANHJXVGKUUWVT@portal310-7.bmix-lon-yp-2b6a8387-561b-4e60-8dce-33275f5fec2b.benamiamit0-gmail-com.composedb.com:22815";
-	
+	private static JedisPool pool;
 	
 	public static void main(String[] args) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException, KeyManagementException {
 		DBClient db = new DBClient();
-		JedisPool pool = new JedisPool(REDIS_CONNECTION_STRING, createDumbSSLSocketFactory(), null, null);
+		pool = new JedisPool(REDIS_CONNECTION_STRING, createDumbSSLSocketFactory(), null, null);
 		
 		Spark.port(8083);
-		new itemRouter(db, pool).init();
+		itemRouter itemRouter = new itemRouter(db, pool);
+		itemRouter.init();
+		
+		CheckoutQueueSubscriber subscriber = new CheckoutQueueSubscriber(db, itemRouter);
+		Queue queue = new Queue(subscriber);
+		queue.listen();
 	}
 	
 	/**
@@ -96,4 +104,5 @@ public class WebServer {
 		context.init(null, trustStore.getTrustManagers(), new SecureRandom());
 		return context.getSocketFactory();
 	}
+	
 }

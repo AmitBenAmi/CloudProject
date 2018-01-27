@@ -1,11 +1,13 @@
 package main;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.google.gson.Gson;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.exceptions.JedisException;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
@@ -66,6 +68,38 @@ public class itemRouter {
 		}
 	}
 	
+	public void addNumberItemRedis(String _id, int number){
+		String key = "Count:" + _id;
+		String member = Integer.toString(number);
+		Jedis jedis = redisPool.getResource();
+		try {
+			//checking if the key already exists
+			if(jedis.exists(key)) {
+				//getting he members of the key
+				String keyMember = jedis.get(key);
+				int result = Integer.parseInt(keyMember);
+				// sum the numbers
+				member = Integer.toString(number + result);
+				// changing the value 
+				jedis.getSet(key, member);
+			} else {
+				//save new item to the redis
+				jedis.set(key, member);
+			}
+	
+		} catch (JedisException e){
+			if (jedis != null)
+			{
+				redisPool.returnBrokenResource(jedis);
+				jedis = null;
+			}
+		} finally {
+			if (jedis != null) {
+				redisPool.returnResource(jedis);
+			}
+		}
+	}
+
 	public void init() {
 		Spark.get("/items/:itemid", this::getItembyId);
 		Spark.get("/items", this::getItems);
