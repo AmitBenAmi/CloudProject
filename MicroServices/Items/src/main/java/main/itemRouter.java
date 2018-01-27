@@ -111,7 +111,9 @@ public class itemRouter {
 		}
 	}
 
-	public List<JSONObject> mostOrderedItems(int number){
+	public List<JSONObject> mostOrderedItems(Request req, Response res){
+		int number = Integer.parseInt(req.params("num"));
+		
 		List<JSONObject> listOfIDs = new ArrayList<JSONObject>();
 		List<JSONObject> xIDs = new ArrayList<JSONObject>();
 		JSONObject JsonObject;
@@ -129,10 +131,16 @@ public class itemRouter {
 		
 		listOfIDs = sort(listOfIDs);
 		
+		if (listOfIDs.size() < number)
+		{
+			number = listOfIDs.size();
+		}
+		
 		//taking only the first X items
 		for(int i = 0; i < number; i++) {
 			xIDs.add(i, listOfIDs.get(i));
 		}
+		
 		
 		return xIDs;
 		
@@ -163,6 +171,7 @@ public class itemRouter {
 	public void init() {
 		Spark.get("/items/:itemid", this::getItembyId);
 		Spark.get("/items", this::getItems);
+		Spark.get("/mostorderditems/:num", this::mostOrderedItems);
 	}
 
 }
