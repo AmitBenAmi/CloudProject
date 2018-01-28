@@ -1,5 +1,5 @@
 package server;
-
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import spark.Spark;
 
 public class WebServer {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IllegalArgumentException, UnsupportedEncodingException {
 		Spark.port(8080);
 
 		Spark.staticFiles.location("/shop");
