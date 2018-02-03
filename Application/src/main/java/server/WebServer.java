@@ -12,7 +12,7 @@ public class WebServer {
 	public static void main(String[] args) throws IllegalArgumentException, UnsupportedEncodingException {
 		Integer applicationPort = getNumericEnvVariable("portNumber");
 		
-		Spark.port(applicationPort != null ? applicationPort : 8080);
+		//Spark.port(applicationPort != null ? applicationPort : 8080);
 
 		Spark.staticFiles.location("/shop");
 
