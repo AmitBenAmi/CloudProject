@@ -29,6 +29,7 @@ public class WebServer {
 		};
 
 		Spark.before(new MicroServicesFilter(servicesRouting));
+		
 	}
 	
 	private static Integer getNumericEnvVariable(String envVarName) {

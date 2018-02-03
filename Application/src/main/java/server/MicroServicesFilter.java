@@ -28,10 +28,9 @@ public class MicroServicesFilter implements Filter {
 	@Override
 	public void handle(Request request, Response response) throws Exception {
 		String url = request.uri();
-		String jwt = request.cookie("jwt");
-
+		
 		if (url.endsWith("html")) {
-			if (!url.endsWith("login.html") && !verifyJWTUsername(jwt, "tomer")) {
+			if (!url.endsWith("login.html")) {
 				response.redirect("login.html");
 			}
 		} else {
@@ -49,15 +48,6 @@ public class MicroServicesFilter implements Filter {
 
 				Spark.halt();
 			});
-		}
-	}
-	
-	private boolean verifyJWTUsername(String token, String username) {
-		if (token != null) {
-			DecodedJWT jwt = this.jwtTokener.validate(token);
-			return jwt.getClaim("username").asString().equals(username);			
-		} else {
-			return false;
 		}
 	}
 

@@ -46,12 +46,27 @@ public class WebServer {
 		pool = new JedisPool(REDIS_CONNECTION_STRING, createDumbSSLSocketFactory(), null, null);
 		
 		Spark.port(8083);
+		allowCORS();
 		itemRouter itemRouter = new itemRouter(db, pool);
 		itemRouter.init();
 		
 		CheckoutQueueSubscriber subscriber = new CheckoutQueueSubscriber(db, itemRouter);
 		Queue queue = new Queue(subscriber);
 		queue.listen();
+	}
+	
+	private static void allowCORS() {
+		// Answer method & headers allowed in options request
+		Spark.options("/*", (request, response) -> {
+			response.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+			response.header("Access-Control-Allow-Headers", request.headers("Access-Control-Request-Headers"));
+			return "";
+        });
+		
+		// Add for each request allowed origin
+		Spark.after("/*", (req, res) -> {
+			res.header("Access-Control-Allow-Origin", "*");
+		});
 	}
 	
 	/**

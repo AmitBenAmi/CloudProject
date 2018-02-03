@@ -78,13 +78,7 @@ public class Router {
 		res.status(404);
 		return "User not found";
 	}
-	
-//	private String authenticateService(Request req, Response res) throws IllegalArgumentException, UnsupportedEncodingException {
-//		String token = new JWTToken().create(req.params("servicename"));
-//		res.cookie("jwt", token);
-//		return token;
-//	}
-	
+		
 	private JsonObject toJson(String json) {
 		return new JsonParser().parse(json).getAsJsonObject();
 	}
@@ -102,6 +96,5 @@ public class Router {
 		Spark.post("/checkuser", this::checkUser);
 		Spark.post("/adduser", this::addUser);
 		Spark.get("/getuseremail/:username", this::getUserEmail);
-//		Spark.post("/service/authenticate/:servicename", this::authenticateService);
 	}
 } 
