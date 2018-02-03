@@ -13,10 +13,15 @@ function login() {
         contentType: "application/json"
     }).done(function(token) {
         setCookie('jwt', token, 0.5);
-        document.location.href="/";
+        window.location.reload();
     }).fail(function(result) {
         alert('username/password invalid');
     })
+}
+
+function logout() {
+    eraseCookie('jwt');
+    window.location.reload();
 }
 
 function setHTMLUsername() {
@@ -27,6 +32,7 @@ function setHTMLUsername() {
         var decoded = jwt_decode(jwt);
         username = decoded.username;
         $('.not-logged').hide();
+        $('.yes-logged').show();
     } 
 
     $('#username-location').text(username);
@@ -57,6 +63,10 @@ function setCookie(name,value,days) {
         expires = "; expires=" + date.toUTCString();
     }
     document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+
+function eraseCookie(name) {   
+    document.cookie = name+'=; Max-Age=-99999999;';  
 }
 
 $(document).ready(function() {
