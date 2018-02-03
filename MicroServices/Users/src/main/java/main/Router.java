@@ -32,7 +32,6 @@ public class Router {
 			User user = users.get(0);
 			if (user.passwordValid(password)) {
 				String token = new JWTToken().create(user);
-				res.cookie("jwt", token);
 				return token;
 			}
 		}
@@ -42,16 +41,23 @@ public class Router {
 		return "invalid username/password";
 	}
 	
-	private String addUser(Request req, Response res)
+	private String addUser(Request req, Response res) throws IllegalArgumentException, UnsupportedEncodingException
 	{
 		JsonObject requestJson = toJson(req.body());
 		String username = requestJson.get("username").getAsString();
 		String password = requestJson.get("password").getAsString();
 		String email = requestJson.get("email").getAsString();
 
+		List<User> users = this.db.findByProp("userName", username, User.class);
+		if (users.size() > 0) {
+			res.status(401);
+			return "user already exists";
+		}
+		
 		User user = new User(username, MD5.hashPassword(password), email);
-		// Will throw exception if user id exists
 		this.db.save(user);
+		String token = new JWTToken().create(user);
+		res.cookie("jwt", token);
 		
 		return "";
 	}
