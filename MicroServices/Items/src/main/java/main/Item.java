@@ -17,5 +17,9 @@ public class Item {
 		this.image = image;
 		this._rev = _rev;
 	}	
+	
+	public String getName() {
+		return this.name;
+	}
 
 }
