@@ -2,18 +2,32 @@ package main;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import spark.Spark;
 
 public class WebServer {
 	
 	public static void main(String[] args) throws IllegalArgumentException, UnsupportedEncodingException {
 		DBClient db = new DBClient();
-		Spark.port(8084);
+		Spark.port(ObjectUtils.firstNonNull(getNumericEnvVariable("usersPort"), 8084));
 		
 		allowCORS();
 
 		new Router(db).init();
 
+	}
+	
+	private static Integer getNumericEnvVariable(String envVarName) {
+		Integer envVarValue = null;
+		try {
+			envVarValue = Integer.parseInt(System.getenv(envVarName));
+		}
+		catch (Exception e) {
+			System.out.println(String.format("%s environment variable isn't defined", envVarName));
+		}
+		
+		return envVarValue;
 	}
 	
 	private static void allowCORS() {
