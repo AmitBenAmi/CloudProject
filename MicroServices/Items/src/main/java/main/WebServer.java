@@ -28,6 +28,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import queue.CheckoutQueueSubscriber;
 import queue.Queue;
 import redis.clients.jedis.Jedis;
@@ -45,13 +47,28 @@ public class WebServer {
 		DBClient db = new DBClient();
 		pool = new JedisPool(REDIS_CONNECTION_STRING, createDumbSSLSocketFactory(), null, null);
 		
-		Spark.port(8083);
+		Spark.port(ObjectUtils.firstNonNull(getNumericEnvVariable("itemsPort"),  8083));
+		allowCORS();
 		itemRouter itemRouter = new itemRouter(db, pool);
 		itemRouter.init();
 		
 		CheckoutQueueSubscriber subscriber = new CheckoutQueueSubscriber(db, itemRouter);
 		Queue queue = new Queue(subscriber);
 		queue.listen();
+	}
+	
+	private static void allowCORS() {
+		// Answer method & headers allowed in options request
+		Spark.options("/*", (request, response) -> {
+			response.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+			response.header("Access-Control-Allow-Headers", request.headers("Access-Control-Request-Headers"));
+			return "";
+        });
+		
+		// Add for each request allowed origin
+		Spark.after("/*", (req, res) -> {
+			res.header("Access-Control-Allow-Origin", "*");
+		});
 	}
 	
 	/**
@@ -105,4 +122,15 @@ public class WebServer {
 		return context.getSocketFactory();
 	}
 	
+	private static Integer getNumericEnvVariable(String envVarName) {
+		Integer envVarValue = null;
+		try {
+			envVarValue = Integer.parseInt(System.getenv(envVarName));
+		}
+		catch (Exception e) {
+			System.out.println(String.format("%s environment variable isn't defined", envVarName));
+		}
+		
+		return envVarValue;
+	}
 }
