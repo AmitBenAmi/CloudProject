@@ -28,6 +28,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import queue.CheckoutQueueSubscriber;
 import queue.Queue;
 import redis.clients.jedis.Jedis;
@@ -45,7 +47,7 @@ public class WebServer {
 		DBClient db = new DBClient();
 		pool = new JedisPool(REDIS_CONNECTION_STRING, createDumbSSLSocketFactory(), null, null);
 		
-		Spark.port(8083);
+		Spark.port(ObjectUtils.firstNonNull(getNumericEnvVariable("itemsPort"),  8083));
 		allowCORS();
 		itemRouter itemRouter = new itemRouter(db, pool);
 		itemRouter.init();
@@ -120,4 +122,15 @@ public class WebServer {
 		return context.getSocketFactory();
 	}
 	
+	private static Integer getNumericEnvVariable(String envVarName) {
+		Integer envVarValue = null;
+		try {
+			envVarValue = Integer.parseInt(System.getenv(envVarName));
+		}
+		catch (Exception e) {
+			System.out.println(String.format("%s environment variable isn't defined", envVarName));
+		}
+		
+		return envVarValue;
+	}
 }

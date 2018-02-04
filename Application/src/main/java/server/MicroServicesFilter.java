@@ -29,8 +29,6 @@ public class MicroServicesFilter implements Filter {
 	public void handle(Request request, Response response) throws Exception {
 		String url = request.uri();
 		
-		System.out.println("Im able to handle :)");
-		
 		if (url.endsWith("html")) {
 			if (!url.endsWith("login.html")) {
 				response.redirect("login.html");
