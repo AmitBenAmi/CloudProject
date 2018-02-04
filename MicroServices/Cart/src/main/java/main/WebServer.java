@@ -35,7 +35,8 @@ public class WebServer {
 		
 		// Add for each request allowed origin
 		Spark.after("/*", (req, res) -> {
-			res.header("Access-Control-Allow-Origin", "*");
+			res.header("Access-Control-Allow-Origin", "http://localhost:8080");
+			res.header("Access-Control-Allow-Credentials", "true");
 		});
 	}
 	

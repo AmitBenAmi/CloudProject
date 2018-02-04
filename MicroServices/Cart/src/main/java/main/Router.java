@@ -30,26 +30,21 @@ public class Router {
 		// Get params
 		JsonObject requestJson = toJson(req.body());
 		String jwt = req.cookie("jwt");
-		String username = requestJson.get("username").getAsString();
+		String username = getUsernameFromToken(jwt);
 		String itemid = requestJson.get("itemid").getAsString();
 		int quantity = requestJson.get("quantity").getAsInt();
-
-		// Check identity
-		if (!verifyJWTUsername(jwt, username)) {
-			// Immidatly exists the function and return 401
-			Spark.halt(401, String.format("Username %s is not authorized", username));
-		}
 
 		// Check if item exists
 		Optional<CartItem> itemOpt = db.findOpt(CartItem.createId(username, itemid), CartItem.class);
 		CartItem item;
 		if (itemOpt.isPresent()) {
 			item = itemOpt.get().changeQuantity(quantity);
+			db.update(item);
 		} else {
 			item = new CartItem(username, itemid, quantity);
+			db.save(item);
 		}
 
-		db.save(item);
 		return "";
 	}
 
@@ -140,6 +135,11 @@ public class Router {
 	private boolean verifyJWTUsername(String token, String username) {
 		DecodedJWT jwt = this.jwtTokener.validate(token);
 		return jwt.getClaim("username").asString().equals(username);
+	}
+	
+	private String getUsernameFromToken(String token) {
+		DecodedJWT jwt = this.jwtTokener.validate(token);
+		return jwt.getClaim("username").asString();
 	}
 
 	public void init() {
