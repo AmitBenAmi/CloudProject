@@ -4,6 +4,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.ObjectUtils;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -18,7 +20,7 @@ public class WebServer {
 		DBClient db = new DBClient();
 		Queue queue = new Queue();
 		
-		Spark.port(8082);
+		Spark.port(ObjectUtils.firstNonNull(getNumericEnvVariable("cartPort"), 8082));
 		allowCORS();
 		new Router(db, queue).init();
 	}
@@ -35,5 +37,17 @@ public class WebServer {
 		Spark.after("/*", (req, res) -> {
 			res.header("Access-Control-Allow-Origin", "*");
 		});
+	}
+	
+	private static Integer getNumericEnvVariable(String envVarName) {
+		Integer envVarValue = null;
+		try {
+			envVarValue = Integer.parseInt(System.getenv(envVarName));
+		}
+		catch (Exception e) {
+			System.out.println(String.format("%s environment variable isn't defined", envVarName));
+		}
+		
+		return envVarValue;
 	}
 }
