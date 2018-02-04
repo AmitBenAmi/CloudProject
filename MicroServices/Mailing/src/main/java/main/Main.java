@@ -10,6 +10,7 @@ public class Main {
 	public static final String gatewayAddress = String.format("%s:%d", ObjectUtils.firstNonNull(getStringEnvVariable("gatewayUrl"), "http://localhost"), ObjectUtils.firstNonNull(getNumericEnvVariable("gatewayPort"), 8080));
 
 	public static void main(String[] args) {
+		System.out.println(gatewayAddress);
 		String password = "B4veLKbX6tQp";
 		String username = "cloud.shop.project";
 		
