@@ -36,6 +36,7 @@ public class CheckoutQueueSubscriber implements QueueSubscriber {
 				int quantity = item.getAsJsonObject().get("quantity").getAsInt();
 				
 				itemRouter.addNumberItemRedis(cartItemId, quantity);
+				
 			});
 			
 		}

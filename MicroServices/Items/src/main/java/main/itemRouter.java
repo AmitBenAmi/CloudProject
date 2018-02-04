@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
@@ -27,10 +28,12 @@ public class itemRouter {
 	
 	private final DBClient db;
 	private final JedisPool redisPool;
+	private final JsonParser parser;
 	
 	public itemRouter(DBClient db, JedisPool pool) {
 		this.db = db;
 		this.redisPool = pool;
+		this.parser = new JsonParser();
 	}
 	
 	private String getItembyId(Request req, Response res) {
@@ -54,6 +57,13 @@ public class itemRouter {
 		return toJsonString(items);
 	}
 	
+	private String getItemName(Request req, Response res) {
+		String itemString = this.getItembyId(req, res);
+		JsonObject itemJson;
+		//String itemId = req.params("itemid");
+		itemJson = parser.parse(itemString).getAsJsonObject();
+		return itemJson.get("name").getAsString();
+	}
 	private String toJsonString(Object object) {
 		return new Gson().toJson(object);
 	}
@@ -171,7 +181,9 @@ public class itemRouter {
 	public void init() {
 		Spark.get("/items/:itemid", this::getItembyId);
 		Spark.get("/items", this::getItems);
-		Spark.get("/mostorderditems/:num", this::mostOrderedItems);
+		Spark.get("/items/mostorderditems/:num", this::mostOrderedItems);
+		Spark.get("/items/name/:itemid", this::getItemName);
+		
 	}
 
 }
