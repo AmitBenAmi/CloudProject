@@ -30,8 +30,57 @@ function getItems() {
     })
 }
 
+function getTopSaledItem() {
+    $.ajax({
+        type : 'GET',
+        url : '/api/items/items/mostorderditems/8',
+        dataType: "json"
+    }).done(function(result) {
+        var carousel = $("#top-saled-container");
+        var row;
+
+        for (var i =0; i < result.length; i++) {
+            // Start new line every 4 items
+            if (i % 4 == 0) {
+                div = $('<div class="item"></div>');
+                row = $('<ul class="thumbnails"></ul>');
+                div.append(row);
+
+                if (i == 0) {
+                    div.addClass('active');
+                }
+
+                carousel.append(div);
+            } 
+
+            // Get the item and create template
+            var item = result[i];
+            var template = getClonedTopSaledItemTemplate();
+            // TODO: If want to add details page, set the link here
+            //template.find("a.ref-img")
+            // Set image in base64
+            template.find("img.ref-img").attr('src', 'data:image/jpeg;base64,' + item.image);
+            // Set name
+            template.find("h5.item-name").text(item.name);
+            // Set price
+            template.find("span.item-price").text(item.price + item.currency);
+            // Remove hidden
+            template.show();
+
+            // Add item to product list
+            row.append(template);
+        }
+    }).fail(function(result) {
+        alert('error top saled loading items');
+    })
+}
+
 function getCloedItemTemplate() {
     return $("#item-template").clone();
+}
+
+function getClonedTopSaledItemTemplate() {
+    return $("#item-top-saled-template").clone();
 }
 
 function addToCartFunction(itemId) {
@@ -76,4 +125,7 @@ function getCookie(cname) {
     return "";
 }
 
-$(document).ready(getItems);
+$(document).ready(function() {
+    getItems();
+    getTopSaledItem();
+});

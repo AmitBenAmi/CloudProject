@@ -113,27 +113,22 @@
 						<h4>Top Saled Products</h4>
 						<div class="row-fluid">
 							<div id="featured" class="carousel slide">
-								<div class="carousel-inner">
-									<div class="item active" id="top-saled-row-1">
-										<ul class="thumbnails">
-											HERE WILL BE THE TOP SALED PRODUCTS FROM REDIS
-										</ul>
-									</div>
+								<div class="carousel-inner" id="top-saled-container">
 								</div>
 								<a class="left carousel-control" href="#featured" data-slide="prev">‹</a>
 								<a class="right carousel-control" href="#featured" data-slide="next">›</a>
 
 								<!-- Template for top sales item -->
-								<li class="span3" style="display:none;">
+								<li class="span3" style="display:none;" id="item-top-saled-template">
 									<div class="thumbnail">
 										<i class="tag"></i>
-										<a href="#">
-											<img src="themes/images/products/b1.jpg" alt="">
+										<a class="ref-img">
+											<img src="" class="ref-img" alt="">
 										</a>
 										<div class="caption">
-											<h5>Product name</h5>
+											<h5 class="item-name">Product name</h5>
 											<h4>
-												<span class="pull-right">price</span>
+												<span class="pull-right item-price">price</span>
 											</h4>
 										</div>
 									</div>

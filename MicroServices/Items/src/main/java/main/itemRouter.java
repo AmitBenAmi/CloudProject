@@ -121,11 +121,10 @@ public class itemRouter {
 		}
 	}
 
-	public List<JSONObject> mostOrderedItems(Request req, Response res){
+	public String mostOrderedItems(Request req, Response res){
 		int number = Integer.parseInt(req.params("num"));
 		
 		List<JSONObject> listOfIDs = new ArrayList<JSONObject>();
-		List<JSONObject> xIDs = new ArrayList<JSONObject>();
 		JSONObject JsonObject;
 		Jedis jedis = redisPool.getResource();
 		
@@ -146,13 +145,21 @@ public class itemRouter {
 			number = listOfIDs.size();
 		}
 		
+		
 		//taking only the first X items
+		JsonArray ids = new JsonArray();
 		for(int i = 0; i < number; i++) {
-			xIDs.add(i, listOfIDs.get(i));
+			ids.add(listOfIDs.get(i).getString("key"));
 		}
 		
+		JsonObject inList = new JsonObject();
+		inList.add("$in", ids);
+		JsonObject query = new JsonObject();
+		query.add("_id", inList);
+		JsonObject selector = new JsonObject();
+		selector.add("selector", query);
 		
-		return xIDs;
+		return toJsonString(db.findBySelector(selector, Item.class));
 		
 	}
 	
