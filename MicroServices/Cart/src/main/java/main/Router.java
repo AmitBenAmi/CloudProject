@@ -123,6 +123,22 @@ public class Router {
 
 		return db.findBySelector(selector, CartItem.class);
 	}
+	
+	private int getNumberOfItemForUser(Request req, Response res)  {
+		int counter = 0;
+		String username = req.params("username");
+		List<CartItem> items = getItemsInCart(username);
+		for (CartItem item:items){
+			try {
+				counter = counter + item.getQuantity();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+		};
+		
+		return counter;
+	}
 
 	private JsonObject toJson(String json) {
 		return new JsonParser().parse(json).getAsJsonObject();
@@ -141,11 +157,14 @@ public class Router {
 		DecodedJWT jwt = this.jwtTokener.validate(token);
 		return jwt.getClaim("username").asString();
 	}
+	
+	
 
 	public void init() {
 		Spark.post("/item", this::saveItem);
 		Spark.delete("/item", this::removeItem);
 		Spark.get("/items/:username", this::getItemsOfUser);
 		Spark.post("/checkout/:username", this::checkout);
+		Spark.get("/items/number/:username", this::getNumberOfItemForUser);
 	}
 }
