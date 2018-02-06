@@ -1,4 +1,3 @@
-
 function login() {
     var password = $("#inputPassword").val();
     var inputEmail = $("#inputEmail").val();
