@@ -4,7 +4,10 @@ function getCartItemsOfUser() {
     $.ajax({
         type : 'GET',
         url : `/api/cart/items/${username}`,
-        dataType: "json"
+        dataType: "json",
+        xhrFields: {
+            withCredentials: true
+        }
     }).done(function(items) {
         console.log(items);
     }).fail(function(result) {
