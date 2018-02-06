@@ -33,4 +33,9 @@ public class CartItem {
 	public CartItem changeQuantity(int quantity) {
 		return new CartItem(this, quantity);
 	}
+	
+	public int getQuantity() {
+		return this.quantity;
+	}
+	
 }
