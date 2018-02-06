@@ -35,7 +35,9 @@
 <div id="header">
 <div class="container">
 <div id="welcomeLine" class="row">
-	<div class="span6">Welcome!<strong> User</strong></div>
+	<div class="span6">Welcome!
+		<strong id="username-location"> User</strong>
+	</div>
 	<div class="span6">
 		<div class="pull-right">
 			<a href="product_summary.html"><span class="btn btn-mini btn-primary"><i class="icon-shopping-cart icon-white"></i> [ 3 ] Items in your cart </span> </a> 
@@ -66,33 +68,38 @@
     <ul id="topMenu" class="nav pull-right">
 	 
 	 
-	 <li class=""><a href="contact.html">Contact</a></li>
-	 <li class="">
-	 <a href="#login" role="button" data-toggle="modal" style="padding-right:0"><span class="btn btn-large btn-success">Login</span></a>
-	<div id="login" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false" >
-		  <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">�</button>
-			<h3>Login Block</h3>
-		  </div>
-		  <div class="modal-body">
-			<form class="form-horizontal loginFrm">
-			  <div class="control-group">								
-				<input type="text" id="inputEmail" placeholder="Email">
-			  </div>
-			  <div class="control-group">
-				<input type="password" id="inputPassword" placeholder="Password">
-			  </div>
-			  <div class="control-group">
-				<label class="checkbox">
-				
-				</label>
-			  </div>
-			</form>		
-			<button type="submit" class="btn btn-success">Sign in</button>
-			<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-		  </div>
-	</div>
-	</li>
+				<li class="">
+						<a href="contact.html">Contact</a>
+					</li>
+					<li class="yes-logged" hidden>
+						<a href="#" onclick="logout()">Logout</a>
+					</li>
+					<li class="not-logged">
+						<a href="register.html">Register</a>
+					</li>
+					<li class="not-logged">
+						<a href="#login" role="button" data-toggle="modal" style="padding-right:0">
+							<span class="btn btn-large btn-success">Login</span>
+						</a>
+						<div id="login" class="modal hide fade in" tabindex="-1" role="dialog" aria-labelledby="login" aria-hidden="false">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+								<h3>Login Block</h3>
+							</div>
+							<div class="modal-body">
+								<form class="form-horizontal loginFrm">
+									<div class="control-group">
+										<input type="text" id="inputEmail" placeholder="Email">
+									</div>
+									<div class="control-group">
+										<input type="password" id="inputPassword" placeholder="Password">
+									</div>
+								</form>
+								<button type="button" class="btn btn-success" onclick="login()">Sign in</button>
+								<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+							</div>
+						</div>
+					</li>
     </ul>
   </div>
 </div>
@@ -108,38 +115,7 @@
 		<li class="active"> SHOPPING CART</li>
     </ul>
 	<h3>  SHOPPING CART [ <small>3 Item(s) </small>]<a href="/#" class="btn btn-large pull-right"><i class="icon-arrow-left"></i> Continue Shopping </a></h3>	
-	<hr class="soft"/>
-	<table class="table table-bordered">
-		<tr><th> I AM ALREADY REGISTERED  </th></tr>
-		 <tr> 
-		 <td>
-			<form class="form-horizontal">
-				<div class="control-group">
-				  <label class="control-label" for="inputUsername">Username</label>
-				  <div class="controls">
-					<input type="text" id="inputUsername" placeholder="Username">
-				  </div>
-				</div>
-				<div class="control-group">
-				  <label class="control-label" for="inputPassword1">Password</label>
-				  <div class="controls">
-					<input type="password" id="inputPassword1" placeholder="Password">
-				  </div>
-				</div>
-				<div class="control-group">
-				  <div class="controls">
-					<button type="submit" class="btn">Sign in</button> OR <a href="register.html" class="btn">Register Now!</a>
-				  </div>
-				</div>
-				<div class="control-group">
-					<div class="controls">
-					  <a href="forgetpass.html" style="text-decoration:underline">Forgot password ?</a>
-					</div>
-				</div>
-			</form>
-		  </td>
-		  </tr>
-	</table>		
+	<hr class="soft"/>	
 			
 	<table class="table table-bordered">
               <thead>
@@ -288,6 +264,9 @@
 	<script src="themes/js/jquery.js" type="text/javascript"></script>
 	<script src="themes/js/bootstrap.min.js" type="text/javascript"></script>
 	<script src="themes/js/google-code-prettify/prettify.js"></script>
+	<script src="js/jwt-decode.min.js"></script>
+	<script src="js/login.js"></script>
+	<script src="js/cart.js"></script>
 	
 	<script src="themes/js/bootshop.js"></script>
     <script src="themes/js/jquery.lightbox-0.5.js"></script>
