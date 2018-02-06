@@ -39,6 +39,21 @@ function setHTMLUsername() {
 
 }
 
+function getUserName() {
+    var jwt = getCookie('jwt');
+    if (jwt) {
+        var decoded = jwt_decode(jwt);
+        return decoded.username;
+    }
+    return undefined;
+}
+
+function setCartVisiblity() {
+    if (!getCookie('jwt')) {
+        $("#welcomeLine a[href='product_summary.html']").hide();
+    }
+}
+
 function getCookie(cname) {
     var name = cname + "=";
     var decodedCookie = decodeURIComponent(document.cookie);
@@ -71,4 +86,5 @@ function eraseCookie(name) {
 
 $(document).ready(function() {
     setHTMLUsername();
+    setCartVisiblity();
 });
