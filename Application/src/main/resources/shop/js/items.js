@@ -1,4 +1,3 @@
-
 function getItems() {
     $.ajax({
         type : 'GET',
@@ -24,6 +23,21 @@ function getItems() {
 
             // Add item to product list
             productsList.append(template);
+        }
+    }).fail(function(result) {
+        alert('error loading items');
+    })
+}
+
+function getItemsByIds(ids, cb) {
+    $.ajax({
+        type : 'POST',
+        url : '/api/items/items',
+        dataType: "json",
+        data: JSON.stringify(ids)
+    }).done(function(items) {
+        if (typeof(cb) === 'function') {
+            cb(items);
         }
     }).fail(function(result) {
         alert('error loading items');
