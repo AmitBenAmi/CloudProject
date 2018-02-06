@@ -116,7 +116,8 @@ function addToCartFunction(itemId) {
             },
             contentType: "application/json"
         }).done(function(result) {
-            alert('added to cart! OMG!! :O')
+            getNumberOfItem();
+            alert('added to cart! OMG!! :O');
         }).fail(function(result) {
             alert('fail to add to cart');
         })
