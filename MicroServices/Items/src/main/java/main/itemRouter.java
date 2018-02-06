@@ -64,6 +64,11 @@ public class itemRouter {
 		itemJson = parser.parse(itemString).getAsJsonObject();
 		return itemJson.get("name").getAsString();
 	}
+	
+	private JsonArray toJsonArray(String json) {
+		return new JsonParser().parse(json).getAsJsonArray();
+	}
+	
 	private String toJsonString(Object object) {
 		return new Gson().toJson(object);
 	}
@@ -152,6 +157,10 @@ public class itemRouter {
 			ids.add(listOfIDs.get(i).getString("key"));
 		}
 		
+		return getItems(ids, Item.class);
+	}
+	
+	private <T> String getItems(JsonArray ids, Class<T> clazz) {
 		JsonObject inList = new JsonObject();
 		inList.add("$in", ids);
 		JsonObject query = new JsonObject();
@@ -159,8 +168,13 @@ public class itemRouter {
 		JsonObject selector = new JsonObject();
 		selector.add("selector", query);
 		
-		return toJsonString(db.findBySelector(selector, Item.class));
-		
+		return toJsonString(db.findBySelector(selector, clazz));
+	}
+	
+	private String getItemsByIds(Request req, Response res) {
+		 JsonArray itemIds = toJsonArray(req.body());
+
+		 return getItems(itemIds, Item.class);
 	}
 	
 	private List<JSONObject> sort(List<JSONObject> listOfIDs){
@@ -190,7 +204,7 @@ public class itemRouter {
 		Spark.get("/items", this::getItems);
 		Spark.get("/items/mostorderditems/:num", this::mostOrderedItems);
 		Spark.get("/items/name/:itemid", this::getItemName);
-		
+		Spark.post("/items", this::getItemsByIds);
 	}
 
 }
