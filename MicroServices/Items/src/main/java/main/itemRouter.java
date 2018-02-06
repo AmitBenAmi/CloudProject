@@ -98,6 +98,7 @@ public class itemRouter {
 		String key = "Count:" + _id;
 		String member = Integer.toString(number);
 		Jedis jedis = redisPool.getResource();
+		
 		try {
 			//checking if the key already exists
 			if(jedis.exists(key)) {

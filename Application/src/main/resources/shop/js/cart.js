@@ -31,7 +31,26 @@ function getNumberOfItem(){
         }
     }).done(function(number) {
         $('#toCart').text("[ " + number +" ] Items in your cart");
+        $('#cart-products__items-count').text(number);
         console.log(number);
+    }).fail(function(result) {
+        alert('error loading items in the cart');
+    })
+}
+
+function checkOut(){
+    let username = getUserName();
+
+    $.ajax({
+        type : 'POST',
+        url : `/api/cart/checkout/${username}`,
+        dataType: "json",
+        xhrFields: {
+            withCredentials: true
+        }
+    }).done(function(data) {
+        getNumberOfItem();
+        alert('Thanks for your order! Please check your mail ');
     }).fail(function(result) {
         alert('error loading items in the cart');
     })
