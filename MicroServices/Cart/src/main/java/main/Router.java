@@ -34,6 +34,12 @@ public class Router {
 		String itemid = requestJson.get("itemid").getAsString();
 		int quantity = requestJson.get("quantity").getAsInt();
 
+		// Check identity
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
+
 		// Check if item exists
 		Optional<CartItem> itemOpt = db.findOpt(CartItem.createId(username, itemid), CartItem.class);
 		CartItem item;
