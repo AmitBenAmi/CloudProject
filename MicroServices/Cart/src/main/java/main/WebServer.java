@@ -28,7 +28,7 @@ public class WebServer {
 	private static void allowCORS() {
 		// Answer method & headers allowed in options request
 		Spark.options("/*", (request, response) -> {
-			response.header("Access-Control-Allow-Methods", "GET, POST, PUT");
+			response.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
 			response.header("Access-Control-Allow-Headers", request.headers("Access-Control-Request-Headers"));
 			return "";
         });

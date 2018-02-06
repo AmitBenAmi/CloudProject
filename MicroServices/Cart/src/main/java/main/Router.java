@@ -34,6 +34,12 @@ public class Router {
 		String itemid = requestJson.get("itemid").getAsString();
 		int quantity = requestJson.get("quantity").getAsInt();
 
+		// Check identity
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
+
 		// Check if item exists
 		Optional<CartItem> itemOpt = db.findOpt(CartItem.createId(username, itemid), CartItem.class);
 		CartItem item;
@@ -74,7 +80,7 @@ public class Router {
 		// Get params
 		String jwt = req.cookie("jwt");
 		String username = req.params("username");
-		
+
 		// Check identity
 		if (!verifyJWTUsername(jwt, username)) {
 			// Immidatly exists the function and return 401
@@ -94,24 +100,25 @@ public class Router {
 			// Immidatly exists the function and return 401
 			Spark.halt(401, String.format("Username %s is not authorized", username));
 		}
-		
+
 		List<CartItem> items = getItemsInCart(username);
-		
+
 		if (items.size() > 0) {
 			JsonObject json = new JsonObject();
 			json.addProperty("username", username);
 			json.add("items", new Gson().toJsonTree(items));
-			
+
 			queue.sendMessage(toJsonString(json));
-			
+
 			items.forEach(item -> {
 				db.remove(item);
 			});
 		}
-		
-		return "OK";
+
+		return "";
+
 	}
-	
+
 	private List<CartItem> getItemsInCart(String username) {
 		// Create query
 		JsonObject regex = new JsonObject();
@@ -123,20 +130,15 @@ public class Router {
 
 		return db.findBySelector(selector, CartItem.class);
 	}
-	
-	private int getNumberOfItemForUser(Request req, Response res)  {
+
+	private int getNumberOfItemForUser(Request req, Response res) {
 		int counter = 0;
 		String username = req.params("username");
 		List<CartItem> items = getItemsInCart(username);
-		for (CartItem item:items){
-			try {
-				counter = counter + item.getQuantity();
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} 
-		};
-		
+		for (CartItem item : items) {
+			counter = counter + item.getQuantity();
+		}
+
 		return counter;
 	}
 
@@ -152,13 +154,11 @@ public class Router {
 		DecodedJWT jwt = this.jwtTokener.validate(token);
 		return jwt.getClaim("username").asString().equals(username);
 	}
-	
+
 	private String getUsernameFromToken(String token) {
 		DecodedJWT jwt = this.jwtTokener.validate(token);
 		return jwt.getClaim("username").asString();
 	}
-	
-	
 
 	public void init() {
 		Spark.post("/item", this::saveItem);
