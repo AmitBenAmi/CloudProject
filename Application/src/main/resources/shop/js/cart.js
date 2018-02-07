@@ -193,7 +193,7 @@ function getClonedCartItemTemplate() {
 }
 
 $(document).ready(function () {
-    if (window.location.path === '/product_summary.html') {
+    if (window.location.pathname === '/product_summary.html') {
         getCartItemsOfUser();
     }
 
