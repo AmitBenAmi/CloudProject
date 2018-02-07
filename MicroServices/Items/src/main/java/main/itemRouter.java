@@ -112,9 +112,8 @@ public class itemRouter {
 	public void addNumberItemRedis(String _id, int number){
 		String key = "Count:" + _id;
 		String member = Integer.toString(number);
-		Jedis jedis = redisPool.getResource();
 		
-		try {
+		try (Jedis jedis = redisPool.getResource()) {
 			//checking if the key already exists
 			if(jedis.exists(key)) {
 				//getting he members of the key
@@ -130,49 +129,47 @@ public class itemRouter {
 			}
 	
 		} catch (JedisException e){
-			if (jedis != null)
-			{
-				redisPool.returnBrokenResource(jedis);
-				jedis = null;
-			}
-		} finally {
-			if (jedis != null) {
-				redisPool.returnResource(jedis);
-			}
+			e.printStackTrace();
 		}
 	}
 
-	public String mostOrderedItems(Request req, Response res){
+	private String mostOrderedItems(Request req, Response res){
 		int number = Integer.parseInt(req.params("num"));
 		
 		List<JSONObject> listOfIDs = new ArrayList<JSONObject>();
 		JSONObject JsonObject;
-		Jedis jedis = redisPool.getResource();
 		
-		//taking all the keys that started with "Count:"
-		Set<String> allKeys = jedis.keys("Count:*");
-		for(String key : allKeys) {
-			int num = Integer.parseInt(jedis.get(key));
-			JsonObject = new JSONObject();
-			JsonObject.put("key" , key.substring(6));
-			JsonObject.put("count" , num);
-			listOfIDs.add(JsonObject);
+		try (Jedis jedis = redisPool.getResource()) {
+			//taking all the keys that started with "Count:"
+			Set<String> allKeys = jedis.keys("Count:*");
+			for(String key : allKeys) {
+				int num = Integer.parseInt(jedis.get(key));
+				JsonObject = new JSONObject();
+				JsonObject.put("key" , key.substring(6));
+				JsonObject.put("count" , num);
+				listOfIDs.add(JsonObject);
 			}
-		
-		listOfIDs = sort(listOfIDs);
-		
-		if (listOfIDs.size() < number)
-		{
-			number = listOfIDs.size();
+			
+			listOfIDs = sort(listOfIDs);
+			
+			if (listOfIDs.size() < number)
+			{
+				number = listOfIDs.size();
+			}
+			
+			//taking only the first X items
+			JsonArray ids = new JsonArray();
+			for(int i = 0; i < number; i++) {
+				ids.add(listOfIDs.get(i).getString("key"));
+			}
+			
+			return getItems(ids, Item.class);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		//taking only the first X items
-		JsonArray ids = new JsonArray();
-		for(int i = 0; i < number; i++) {
-			ids.add(listOfIDs.get(i).getString("key"));
-		}
-		
-		return getItems(ids, Item.class);
+		return "[]";
 	}
 	
 	private <T> String getItems(JsonArray ids, Class<T> clazz) {
