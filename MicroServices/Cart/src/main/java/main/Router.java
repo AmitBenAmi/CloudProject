@@ -80,6 +80,13 @@ public class Router {
 		// Get params
 		String jwt = req.cookie("jwt");
 		String username = req.params("username");
+		
+		if (jwt == null) {
+			System.out.println("This is null");
+		}
+		else {
+			System.out.println("jwt is: " + jwt);
+		}
 
 		// Check identity
 		if (!verifyJWTUsername(jwt, username)) {
