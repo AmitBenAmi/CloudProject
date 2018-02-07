@@ -33,9 +33,11 @@ public class WebServer {
 			return "";
         });
 		
+		String origin = getStringEnvVariable("origin");
+		
 		// Add for each request allowed origin
 		Spark.after("/*", (req, res) -> {
-			res.header("Access-Control-Allow-Origin", req.headers("Origin"));
+			res.header("Access-Control-Allow-Origin", ObjectUtils.firstNonNull(origin, req.headers("Origin")));
 			res.header("Access-Control-Allow-Credentials", "true");
 		});
 	}
@@ -44,6 +46,18 @@ public class WebServer {
 		Integer envVarValue = null;
 		try {
 			envVarValue = Integer.parseInt(System.getenv(envVarName));
+		}
+		catch (Exception e) {
+			System.out.println(String.format("%s environment variable isn't defined", envVarName));
+		}
+		
+		return envVarValue;
+	}
+	
+	private static String getStringEnvVariable(String envVarName) {
+		String envVarValue = null;
+		try {
+			envVarValue = System.getenv(envVarName).toString();
 		}
 		catch (Exception e) {
 			System.out.println(String.format("%s environment variable isn't defined", envVarName));
