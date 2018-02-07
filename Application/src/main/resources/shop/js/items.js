@@ -53,7 +53,7 @@ function getTopSaledItem() {
         var carousel = $("#top-saled-container");
         var row;
 
-        for (var i =0; i < result.length; i++) {
+        for (var i = 0; i < result.length; i++) {
             // Start new line every 4 items
             if (i % 4 == 0) {
                 div = $('<div class="item"></div>');
@@ -142,5 +142,8 @@ function getCookie(cname) {
 
 $(document).ready(function() {
     getItems();
-    getTopSaledItem();
+    if ( window.location.pathname == "/" ){
+        getTopSaledItem();
+    }
+    
 });

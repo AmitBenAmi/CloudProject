@@ -52,6 +52,21 @@ public class itemRouter {
 		}
 	}
 	
+	private String getItembyId(String itemId) {
+		
+		Optional<String> itemJsonOpt = getItemJsonFromCache(itemId);
+		
+		if (itemJsonOpt.isPresent()) {
+			return itemJsonOpt.get();
+		}
+		else {
+			Item item = this.db.find(itemId, Item.class);
+			String itemJson = toJsonString(item);
+			saveItemJsonToCache(itemId, itemJson);
+			return itemJson;
+		}
+	}
+	
 	private String getItems(Request req, Response res) {
 		List<Item> items = this.db.findAll(Item.class);
 		return toJsonString(items);
@@ -151,7 +166,6 @@ public class itemRouter {
 			number = listOfIDs.size();
 		}
 		
-		
 		//taking only the first X items
 		JsonArray ids = new JsonArray();
 		for(int i = 0; i < number; i++) {
@@ -168,7 +182,6 @@ public class itemRouter {
 		query.add("_id", inList);
 		JsonObject selector = new JsonObject();
 		selector.add("selector", query);
-		
 		return toJsonString(db.findBySelector(selector, clazz));
 	}
 	
