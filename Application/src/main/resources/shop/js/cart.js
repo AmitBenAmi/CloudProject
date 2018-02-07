@@ -117,47 +117,57 @@ function updateCartItemNumbers(element, cartItem, item) {
 
 function increaseQuantity(element, item, cartItem) {
     return function () {
-        $.ajax({
-            type: 'POST',
-            url: '/api/cart/item',
-            dataType: "json",
-            data: JSON.stringify({
-                itemid: item._id,
-                quantity: cartItem.quantity + 1
-            }),
-            xhrFields: {
-                withCredentials: true
-            }
-        }).done(function () {
-            cartItem.quantity++;
-            getNumberOfItem();
-            updateCartItemNumbers(element, cartItem, item);
-        }).fail(function (result) {
-            alert('error updating item');
-        })
+        let username = getUserName();
+
+        if (username) {
+            $.ajax({
+                type: 'POST',
+                url: '/api/cart/item',
+                dataType: "json",
+                data: JSON.stringify({
+                    itemid: item._id,
+                    username: username,
+                    quantity: cartItem.quantity + 1
+                }),
+                xhrFields: {
+                    withCredentials: true
+                }
+            }).done(function () {
+                cartItem.quantity++;
+                getNumberOfItem();
+                updateCartItemNumbers(element, cartItem, item);
+            }).fail(function (result) {
+                alert('error updating item');
+            })
+        }
     }
 }
 
 function decreaseQuantity(element, item, cartItem) {
     return function () {
-        $.ajax({
-            type: 'POST',
-            url: '/api/cart/item',
-            dataType: "json",
-            data: JSON.stringify({
-                itemid: item._id,
-                quantity: cartItem.quantity - 1
-            }),
-            xhrFields: {
-                withCredentials: true
-            }
-        }).done(function () {
-            cartItem.quantity--;
-            getNumberOfItem();
-            updateCartItemNumbers(element, cartItem, item);
-        }).fail(function (result) {
-            alert('error updating item');
-        })
+        let username = getUserName();
+
+        if (username) {
+            $.ajax({
+                type: 'POST',
+                url: '/api/cart/item',
+                dataType: "json",
+                data: JSON.stringify({
+                    itemid: item._id,
+                    username: username,
+                    quantity: cartItem.quantity - 1
+                }),
+                xhrFields: {
+                    withCredentials: true
+                }
+            }).done(function () {
+                cartItem.quantity--;
+                getNumberOfItem();
+                updateCartItemNumbers(element, cartItem, item);
+            }).fail(function (result) {
+                alert('error updating item');
+            })
+        }
     }
 }
 

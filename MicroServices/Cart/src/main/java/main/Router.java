@@ -30,8 +30,8 @@ public class Router {
 		// Get params
 		JsonObject requestJson = toJson(req.body());
 		String jwt = req.cookie("jwt");
-		String username = getUsernameFromToken(jwt);
-		System.out.println("Username is: " + username);
+//		String username = getUsernameFromToken(jwt);
+		String username = requestJson.get("username").getAsString();
 		String itemid = requestJson.get("itemid").getAsString();
 		int quantity = requestJson.get("quantity").getAsInt();
 
