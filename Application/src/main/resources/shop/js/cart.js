@@ -1,25 +1,27 @@
 function getCartItemsOfUser() {
     let username = getUserName();
 
-    $.ajax({
-        type: 'GET',
-        url: `/api/cart/items/${username}`,
-        dataType: "json",
-        xhrFields: {
-            withCredentials: true
-        }
-    }).done(function (cartItems) {
-        //$('#cart-products__items-count').text(items.length);
-
-        if (cartItems.length > 0) {
-            getCartItemsDetails(cartItems);
-        }
-    }).fail(function (result) {
-        alert('error loading items in the cart');
-    })
+    if (username) {
+        $.ajax({
+            type: 'GET',
+            url: `/api/cart/items/${username}`,
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            }
+        }).done(function (cartItems) {
+            //$('#cart-products__items-count').text(items.length);
+    
+            if (cartItems.length > 0) {
+                getCartItemsDetails(cartItems);
+            }
+        }).fail(function (result) {
+            alert('error loading items in the cart');
+        })
+    }
 }
 
-function getNumberOfItem() {
+function getNumberOfItem(cb) {
     let username = getUserName();
 
     if (username) {
@@ -36,8 +38,15 @@ function getNumberOfItem() {
             if (number === 0) {
                 $('#checkOutbtn').hide();
             }
+
+            if (typeof(cb) === 'function') {
+                cb();
+            }
         }).fail(function (result) {
             alert('error loading items in the cart');
+            if (typeof(cb) === 'function') {
+                cb();
+            }
         })
     }
 }
@@ -54,9 +63,10 @@ function checkOut() {
                 withCredentials: true
             }
         }).done(function (data) {
-            getNumberOfItem();
+            getNumberOfItem(function () {
+                window.location.reload();
+            });
             alert('Thank for your order! Please check your mail');
-            window.location.reload();
         }).fail(function (result) {
             alert('error loading items in the cart');
         })
