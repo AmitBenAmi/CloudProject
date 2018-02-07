@@ -104,23 +104,28 @@ function addToCartFunction(itemId) {
             return;
         }
 
-        $.ajax({
-            type : 'POST',
-            url : 'api/cart/item',
-            data : JSON.stringify({
-                'itemid' : itemId,
-                'quantity' : 1
-            }),
-            xhrFields: {
-                withCredentials: true
-            },
-            contentType: "application/json"
-        }).done(function(result) {
-            getNumberOfItem();
-            alert('added to cart! OMG!! :O');
-        }).fail(function(result) {
-            alert('fail to add to cart');
-        })
+        let username = getUserName();
+
+        if (username) {
+            $.ajax({
+                type : 'POST',
+                url : 'api/cart/item',
+                data : JSON.stringify({
+                    'itemid' : itemId,
+                    'username': username,
+                    'quantity' : 1
+                }),
+                xhrFields: {
+                    withCredentials: true
+                },
+                contentType: "application/json"
+            }).done(function(result) {
+                getNumberOfItem();
+                alert('added to cart! OMG!! :O');
+            }).fail(function(result) {
+                alert('fail to add to cart');
+            })
+        }
     };
 }
 
