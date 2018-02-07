@@ -1,62 +1,68 @@
 function getCartItemsOfUser() {
     let username = getUserName();
-
-    $.ajax({
-        type: 'GET',
-        url: `/api/cart/items/${username}`,
-        dataType: "json",
-        xhrFields: {
-            withCredentials: true
-        }
-    }).done(function (cartItems) {
-        //$('#cart-products__items-count').text(items.length);
-
-        if (cartItems.length > 0) {
-            getCartItemsDetails(cartItems);
-        }
-    }).fail(function (result) {
-        alert('error loading items in the cart');
-    })
+    
+    if (username) {
+        $.ajax({
+            type: 'GET',
+            url: `/api/cart/items/${username}`,
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            }
+        }).done(function (cartItems) {
+            //$('#cart-products__items-count').text(items.length);
+    
+            if (cartItems.length > 0) {
+                getCartItemsDetails(cartItems);
+            }
+        }).fail(function (result) {
+            alert('error loading items in the cart');
+        })
+    }
 }
 
 function getNumberOfItem() {
     let username = getUserName();
 
-    $.ajax({
-        type: 'GET',
-        url: `/api/cart/items/number/${username}`,
-        dataType: "json",
-        xhrFields: {
-            withCredentials: true
-        }
-    }).done(function(number) {
-        $('#toCart').text("[ " + number +" ] Items in your cart");
-        $('#cart-products__items-count').text(number);
-        if (number === 0){
-            $('#checkOutbtn').hide();
-        }
-    }).fail(function(result) {
-        alert('error loading items in the cart');
-    })
+    if (username) {
+        $.ajax({
+            type: 'GET',
+            url: `/api/cart/items/number/${username}`,
+            dataType: "json",
+            xhrFields: {
+                withCredentials: true
+            }
+        }).done(function(number) {
+            $('#toCart').text("[ " + number +" ] Items in your cart");
+            $('#cart-products__items-count').text(number);
+            if (number === 0){
+                $('#checkOutbtn').hide();
+            }
+        }).fail(function(result) {
+            alert('error loading items in the cart');
+        })
+    }
 }
 
 function checkOut(){
     let username = getUserName();
 
-    $.ajax({
-        type : 'POST',
-        url : `/api/cart/checkout/${username}`,
-        dataType: "text",
-        xhrFields: {
-            withCredentials: true
-        }
-    }).done(function(data) {
-        getNumberOfItem();
-        alert('Thank for your order! Please check your mail');
-        window.location.reload();
-    }).fail(function(result) {
-        alert('error loading items in the cart');
-    })
+    if (username) {
+        $.ajax({
+            type : 'POST',
+            url : `/api/cart/checkout/${username}`,
+            dataType: "text",
+            xhrFields: {
+                withCredentials: true
+            }
+        }).done(function(data) {
+            getNumberOfItem();
+            alert('Thank for your order! Please check your mail');
+            window.location.reload();
+        }).fail(function(result) {
+            alert('error loading items in the cart');
+        })
+    }
 }
 
 function getCartItemsDetails(cartItems) {
@@ -75,21 +81,23 @@ function getCartItemsDetails(cartItems) {
 function populateCartItems(items, cartItems) {
     let cartItemsList = $('#cart-items');
     let username = getUserName();
-    for (let i = 0; i < items.length; i++) {
-        let item = items[i];
-        let template = getClonedCartItemTemplate();
-        let cartItem = getCartItemForItem(item, cartItems);
-
-        template.find('img.ref-img').attr('src', `data:image/jpeg;base64,${item.image}`);
-        template.find('td.cart-item__name').text(item.name);
-        updateCartItemNumbers(template, cartItem, item);
-
-        template.find('button.quantity-increase').click(increaseQuantity(template, item, cartItem));
-        template.find('button.quantity-decrease').click(decreaseQuantity(template, item, cartItem));
-        template.find('button.item-remove').click(removeItem(template, username, item));
-
-        cartItemsList.append(template);
-        template.show();
+    if (username) {
+        for (let i = 0; i < items.length; i++) {
+            let item = items[i];
+            let template = getClonedCartItemTemplate();
+            let cartItem = getCartItemForItem(item, cartItems);
+    
+            template.find('img.ref-img').attr('src', `data:image/jpeg;base64,${item.image}`);
+            template.find('td.cart-item__name').text(item.name);
+            updateCartItemNumbers(template, cartItem, item);
+    
+            template.find('button.quantity-increase').click(increaseQuantity(template, item, cartItem));
+            template.find('button.quantity-decrease').click(decreaseQuantity(template, item, cartItem));
+            template.find('button.item-remove').click(removeItem(template, username, item));
+    
+            cartItemsList.append(template);
+            template.show();
+        }
     }
 }
 
@@ -185,6 +193,9 @@ function getClonedCartItemTemplate() {
 }
 
 $(document).ready(function () {
-    getCartItemsOfUser();
+    if (window.location.path === '/product_summary.html') {
+        getCartItemsOfUser();
+    }
+
     getNumberOfItem();
 });
