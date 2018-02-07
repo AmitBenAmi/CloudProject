@@ -32,6 +32,9 @@ function getNumberOfItem() {
     }).done(function(number) {
         $('#toCart').text("[ " + number +" ] Items in your cart");
         $('#cart-products__items-count').text(number);
+        if (number === 0){
+            $('#checkOutbtn').hide();
+        }
     }).fail(function(result) {
         alert('error loading items in the cart');
     })
@@ -43,13 +46,14 @@ function checkOut(){
     $.ajax({
         type : 'POST',
         url : `/api/cart/checkout/${username}`,
-        dataType: "json",
+        dataType: "text",
         xhrFields: {
             withCredentials: true
         }
     }).done(function(data) {
         getNumberOfItem();
-        alert('Thanks for your order! Please check your mail ');
+        alert('Thank for your order! Please check your mail');
+        window.location.reload();
     }).fail(function(result) {
         alert('error loading items in the cart');
     })
