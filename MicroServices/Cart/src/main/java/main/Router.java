@@ -30,9 +30,7 @@ public class Router {
 		// Get params
 		JsonObject requestJson = toJson(req.body());
 		String jwt = req.cookie("jwt");
-		System.out.println(String.format("This is the jwt cookie: %s", jwt));
 		String username = getUsernameFromToken(jwt);
-//		String username = requestJson.get("username").getAsString();
 		String itemid = requestJson.get("itemid").getAsString();
 		int quantity = requestJson.get("quantity").getAsInt();
 
@@ -60,14 +58,14 @@ public class Router {
 		// Get params
 		JsonObject requestJson = toJson(req.body());
 		String jwt = req.cookie("jwt");
-		String username = requestJson.get("username").getAsString();
+		String username = getUsernameFromToken(jwt);
 		String itemid = requestJson.get("itemid").getAsString();
 
 		// Check identity
-//		if (!verifyJWTUsername(jwt, username)) {
-//			// Immidatly exists the function and return 401
-//			Spark.halt(401, String.format("Username %s is not authorized", username));
-//		}
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
 
 		// Find item in order to get rev and remove
 		Optional<CartItem> itemOpt = db.findOpt(CartItem.createId(username, itemid), CartItem.class);
@@ -81,13 +79,13 @@ public class Router {
 	private String getItemsOfUser(Request req, Response res) {
 		// Get params
 		String jwt = req.cookie("jwt");
-		String username = req.params("username");
+		String username = getUsernameFromToken(jwt);
 
 		// Check identity
-//		if (!verifyJWTUsername(jwt, username)) {
-//			// Immidatly exists the function and return 401
-//			Spark.halt(401, String.format("Username %s is not authorized", username));
-//		}
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
 
 		return toJsonString(getItemsInCart(username));
 	}
@@ -95,13 +93,13 @@ public class Router {
 	private String checkout(Request req, Response res) {
 		// Get params
 		String jwt = req.cookie("jwt");
-		String username = req.params("username");
+		String username = getUsernameFromToken(jwt);
 
-//		// Check identity
-//		if (!verifyJWTUsername(jwt, username)) {
-//			// Immidatly exists the function and return 401
-//			Spark.halt(401, String.format("Username %s is not authorized", username));
-//		}
+		// Check identity
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
 
 		List<CartItem> items = getItemsInCart(username);
 
@@ -135,7 +133,16 @@ public class Router {
 
 	private int getNumberOfItemForUser(Request req, Response res) {
 		int counter = 0;
-		String username = req.params("username");
+		// Get params
+		String jwt = req.cookie("jwt");
+		String username = getUsernameFromToken(jwt);
+
+		// Check identity
+		if (!verifyJWTUsername(jwt, username)) {
+			// Immidatly exists the function and return 401
+			Spark.halt(401, String.format("Username %s is not authorized", username));
+		}
+		
 		List<CartItem> items = getItemsInCart(username);
 		for (CartItem item : items) {
 			counter = counter + item.getQuantity();
@@ -165,8 +172,8 @@ public class Router {
 	public void init() {
 		Spark.post("/item", this::saveItem);
 		Spark.delete("/item", this::removeItem);
-		Spark.get("/items/:username", this::getItemsOfUser);
-		Spark.post("/checkout/:username", this::checkout);
-		Spark.get("/items/number/:username", this::getNumberOfItemForUser);
+		Spark.get("/items", this::getItemsOfUser);
+		Spark.post("/checkout", this::checkout);
+		Spark.get("/items/number", this::getNumberOfItemForUser);
 	}
 }

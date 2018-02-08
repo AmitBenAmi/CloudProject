@@ -4,14 +4,13 @@ function getCartItemsOfUser() {
     if (username) {
         $.ajax({
             type: 'GET',
-            url: `/api/cart/items/${username}`,
+            url: `/api/cart/items`,
             dataType: "json",
+            crossDomain: true,
             xhrFields: {
                 withCredentials: true
             }
         }).done(function (cartItems) {
-            //$('#cart-products__items-count').text(items.length);
-    
             if (cartItems.length > 0) {
                 getCartItemsDetails(cartItems);
             }
@@ -27,8 +26,9 @@ function getNumberOfItem(cb) {
     if (username) {
         $.ajax({
             type: 'GET',
-            url: `/api/cart/items/number/${username}`,
+            url: `/api/cart/items/number`,
             dataType: "json",
+            crossDomain: true,
             xhrFields: {
                 withCredentials: true
             }
@@ -57,8 +57,9 @@ function checkOut() {
     if (username) {
         $.ajax({
             type: 'POST',
-            url: `/api/cart/checkout/${username}`,
+            url: `/api/cart/checkout`,
             dataType: "text",
+            crossDomain: true,
             xhrFields: {
                 withCredentials: true
             }
@@ -126,7 +127,6 @@ function increaseQuantity(element, item, cartItem) {
                 dataType: "json",
                 data: JSON.stringify({
                     itemid: item._id,
-                    username: username,
                     quantity: cartItem.quantity + 1
                 }),
                 xhrFields: {
@@ -154,7 +154,6 @@ function decreaseQuantity(element, item, cartItem) {
                 dataType: "json",
                 data: JSON.stringify({
                     itemid: item._id,
-                    username: username,
                     quantity: cartItem.quantity - 1
                 }),
                 xhrFields: {
@@ -178,7 +177,6 @@ function removeItem(element, username, item) {
             url: '/api/cart/item',
             dataType: "json",
             data: JSON.stringify({
-                username: username,
                 itemid: item._id
             }),
             xhrFields: {
