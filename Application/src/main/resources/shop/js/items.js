@@ -112,7 +112,6 @@ function addToCartFunction(itemId) {
                 url : 'api/cart/item',
                 data : JSON.stringify({
                     'itemid' : itemId,
-                    'username': username,
                     'quantity' : 1
                 }),
                 crossDomain: true,
