@@ -76,11 +76,15 @@ function setCookie(name,value,days) {
         date.setTime(date.getTime() + (days*24*60*60*1000));
         expires = "; expires=" + date.toUTCString();
     }
-    document.cookie = `${name}=${value || ""}${expires}; path=/; Domain=${document.domain === 'localhost' ? 'localhost' : 'eu-de.mybluemix.net'}`;
+    document.cookie = `${name}=${value || ""}${expires}; path=/; Domain=${getDomainForCookie()}`;
+}
+
+function getDomainForCookie() {
+    return document.domain === 'localhost' ? 'localhost' : 'eu-de.mybluemix.net';
 }
 
 function eraseCookie(name) {   
-    document.cookie = name+'=; Max-Age=-99999999;';  
+    document.cookie = `${name}=; Domain=${getDomainForCookie()}; Max-Age=-99999999;`;  
 }
 
 $(document).ready(function() {
