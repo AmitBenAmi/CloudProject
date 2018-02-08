@@ -28,6 +28,9 @@ public class MicroServicesFilter implements Filter {
 	@Override
 	public void handle(Request request, Response response) throws Exception {
 		String url = request.uri();
+
+		String jwt = request.cookie("jwt");
+		System.out.println(String.format("Jwt is: %s", jwt));
 		
 		if (url.endsWith("html")) {
 			if (!url.endsWith("login.html")) {
