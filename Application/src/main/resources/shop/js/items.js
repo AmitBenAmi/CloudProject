@@ -115,6 +115,7 @@ function addToCartFunction(itemId) {
                     'username': username,
                     'quantity' : 1
                 }),
+                crossDomain: true,
                 xhrFields: {
                     withCredentials: true
                 },
